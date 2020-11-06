@@ -13,8 +13,8 @@ int main()
 	Binarization("pic.bmp", "BinarizationPic.bmp");
     Erosion("BinarizationPic.bmp", "ErosionPic.bmp");
     Delation("BinarizationPic.bmp", "DelationPic.bmp");
-    // Opening("BinarizationPic.bmp", "OpeningPic.bmp");
-    // Closing("BinarizationPic.bmp", "ClosingPic.bmp");
+    Opening("BinarizationPic.bmp", "OpeningPic.bmp");
+    Closing("BinarizationPic.bmp", "ClosingPic.bmp");
 
 	return 0;
 }
@@ -175,24 +175,14 @@ void Erosion(char* input, char* output)
     fread(data, imageSize, 1, pic1);  //记录图像数据
 
     int i, j;
-	for (i = 1; i < h-1; i++)
+	for (i = 0; i < h-2; i++)
 	{
-		for (j = 3; j < w*3-skip-3; j += 3)
+		for (j = 0; j < w*3-skip-6; j += 3)
 		{
 			int t = i*bytesPerLine + j;
-            
-            int Y = data[t];
-            int Y1 = data[t-bytesPerLine-3];
-            int Y2 = data[t-bytesPerLine];
-            int Y3 = data[t-bytesPerLine+3];
-            int Y4 = data[t-3];
-            int Y5 = data[t+3];
-            int Y6 = data[t+bytesPerLine-3];
-            int Y7 = data[t+bytesPerLine];
-            int Y8 = data[t+bytesPerLine+3];
 
-            int total = Y+Y1+Y2+Y3+Y4+Y5+Y6+Y7+Y8;
-            if (total < 255*9) Y = 0;
+            int Y;
+            if (data[t] == 0 || data[t+bytesPerLine] == 0 || data[t+2*bytesPerLine] == 0 || data[t+3] == 0 || data[t+6] == 0) Y = 0;
             else Y = 255;
 			
             data[t] = data[t+1] = data[t+2] = (BYTE)Y; 
@@ -239,23 +229,16 @@ void Delation(char* input, char* output)
     BYTE* data = (BYTE*)malloc(imageSize);  //申请存储图像数据的空间
     fread(data, imageSize, 1, pic1);  //记录图像数据
 
-    int i, j;
-	for (i = 1; i < h-1; i++)
+	int i, j;
+    for (i = 0; i < h-2; i++)
 	{
-		for (j = 3; j < w*3-skip-3; j += 3)
+		for (j = 0; j < w*3-skip-6; j += 3)
 		{
 			int t = i*bytesPerLine + j;
-            
-            int Y = data[t];
-            int Y1 = data[t-bytesPerLine];
-            int Y2 = data[t+bytesPerLine];
-            int Y3 = data[t-3];
-            int Y4 = data[t+3];
 
-            int total = Y+Y1+Y2+Y3+Y4;
-            
-            if (total > 0) Y = 255;
-            else Y = 0;
+            int Y;
+            if (data[t] == 0 && data[t+bytesPerLine] == 0 && data[t+2*bytesPerLine] == 0 && data[t+3] == 0 && data[t+6] == 0) Y = 0;
+            else Y = 255;
 			
             data[t] = data[t+1] = data[t+2] = (BYTE)Y; 
 		}
@@ -301,7 +284,33 @@ void Opening(char* input, char* output)
     BYTE* data = (BYTE*)malloc(imageSize);  //申请存储图像数据的空间
     fread(data, imageSize, 1, pic1);  //记录图像数据
 
+    int i, j;
+	for (i = 0; i < h-2; i++)
+	{
+		for (j = 0; j < w*3-skip-6; j += 3)
+		{
+			int t = i*bytesPerLine + j;
 
+            int Y;
+            if (data[t] == 0 || data[t+bytesPerLine] == 0 || data[t+2*bytesPerLine] == 0 || data[t+3] == 0 || data[t+6] == 0) Y = 0;
+            else Y = 255;
+			
+            data[t] = data[t+1] = data[t+2] = (BYTE)Y; 
+		}
+	}
+    for (i = 0; i < h-2; i++)
+	{
+		for (j = 0; j < w*3-skip-6; j += 3)
+		{
+			int t = i*bytesPerLine + j;
+
+            int Y;
+            if (data[t] == 0 && data[t+bytesPerLine] == 0 && data[t+2*bytesPerLine] == 0 && data[t+3] == 0 && data[t+6] == 0) Y = 0;
+            else Y = 255;
+			
+            data[t] = data[t+1] = data[t+2] = (BYTE)Y; 
+		}
+	}
 
 	FILE* pic2 = fopen(output, "wb");  //创建输出文件
 
@@ -343,7 +352,33 @@ void Closing(char* input, char* output)
     BYTE* data = (BYTE*)malloc(imageSize);  //申请存储图像数据的空间
     fread(data, imageSize, 1, pic1);  //记录图像数据
 
+    int i, j;
+    for (i = 0; i < h-2; i++)
+	{
+		for (j = 0; j < w*3-skip-6; j += 3)
+		{
+			int t = i*bytesPerLine + j;
 
+            int Y;
+            if (data[t] == 0 && data[t+bytesPerLine] == 0 && data[t+2*bytesPerLine] == 0 && data[t+3] == 0 && data[t+6] == 0) Y = 0;
+            else Y = 255;
+			
+            data[t] = data[t+1] = data[t+2] = (BYTE)Y; 
+		}
+	}
+	for (i = 0; i < h-2; i++)
+	{
+		for (j = 0; j < w*3-skip-6; j += 3)
+		{
+			int t = i*bytesPerLine + j;
+
+            int Y;
+            if (data[t] == 0 || data[t+bytesPerLine] == 0 || data[t+2*bytesPerLine] == 0 || data[t+3] == 0 || data[t+6] == 0) Y = 0;
+            else Y = 255;
+			
+            data[t] = data[t+1] = data[t+2] = (BYTE)Y; 
+		}
+	}
 
 	FILE* pic2 = fopen(output, "wb");  //创建输出文件
 
