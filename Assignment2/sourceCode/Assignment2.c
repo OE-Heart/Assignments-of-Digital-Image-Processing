@@ -182,7 +182,7 @@ void Erosion(char* input, char* output)
 			int t = i*bytesPerLine + j;
 
             int Y;
-            if (data[t] == 0 || data[t+bytesPerLine] == 0 || data[t+2*bytesPerLine] == 0 || data[t+3] == 0 || data[t+6] == 0) Y = 0;
+            if (data[t] == 0 && data[t+bytesPerLine] == 0 && data[t+2*bytesPerLine] == 0 && data[t+3] == 0 && data[t+6] == 0) Y = 0;
             else Y = 255;
 			
             data[t] = data[t+1] = data[t+2] = (BYTE)Y; 
@@ -237,7 +237,7 @@ void Delation(char* input, char* output)
 			int t = i*bytesPerLine + j;
 
             int Y;
-            if (data[t] == 0 && data[t+bytesPerLine] == 0 && data[t+2*bytesPerLine] == 0 && data[t+3] == 0 && data[t+6] == 0) Y = 0;
+            if (data[t] == 0 || data[t+bytesPerLine] == 0 || data[t+2*bytesPerLine] == 0 || data[t+3] == 0 || data[t+6] == 0) Y = 0;
             else Y = 255;
 			
             data[t] = data[t+1] = data[t+2] = (BYTE)Y; 
@@ -292,7 +292,7 @@ void Opening(char* input, char* output)
 			int t = i*bytesPerLine + j;
 
             int Y;
-            if (data[t] == 0 || data[t+bytesPerLine] == 0 || data[t+2*bytesPerLine] == 0 || data[t+3] == 0 || data[t+6] == 0) Y = 0;
+            if (data[t] == 0 && data[t+bytesPerLine] == 0 && data[t+2*bytesPerLine] == 0 && data[t+3] == 0 && data[t+6] == 0) Y = 0;
             else Y = 255;
 			
             data[t] = data[t+1] = data[t+2] = (BYTE)Y; 
@@ -305,7 +305,7 @@ void Opening(char* input, char* output)
 			int t = i*bytesPerLine + j;
 
             int Y;
-            if (data[t] == 0 && data[t+bytesPerLine] == 0 && data[t+2*bytesPerLine] == 0 && data[t+3] == 0 && data[t+6] == 0) Y = 0;
+            if (data[t] == 0 || data[t+bytesPerLine] == 0 || data[t+2*bytesPerLine] == 0 || data[t+3] == 0 || data[t+6] == 0) Y = 0;
             else Y = 255;
 			
             data[t] = data[t+1] = data[t+2] = (BYTE)Y; 
@@ -360,7 +360,7 @@ void Closing(char* input, char* output)
 			int t = i*bytesPerLine + j;
 
             int Y;
-            if (data[t] == 0 && data[t+bytesPerLine] == 0 && data[t+2*bytesPerLine] == 0 && data[t+3] == 0 && data[t+6] == 0) Y = 0;
+            if (data[t] == 0 || data[t+bytesPerLine] == 0 || data[t+2*bytesPerLine] == 0 || data[t+3] == 0 || data[t+6] == 0) Y = 0;
             else Y = 255;
 			
             data[t] = data[t+1] = data[t+2] = (BYTE)Y; 
@@ -373,7 +373,7 @@ void Closing(char* input, char* output)
 			int t = i*bytesPerLine + j;
 
             int Y;
-            if (data[t] == 0 || data[t+bytesPerLine] == 0 || data[t+2*bytesPerLine] == 0 || data[t+3] == 0 || data[t+6] == 0) Y = 0;
+            if (data[t] == 0 && data[t+bytesPerLine] == 0 && data[t+2*bytesPerLine] == 0 && data[t+3] == 0 && data[t+6] == 0) Y = 0;
             else Y = 255;
 			
             data[t] = data[t+1] = data[t+2] = (BYTE)Y; 
