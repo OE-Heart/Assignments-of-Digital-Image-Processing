@@ -85,8 +85,8 @@ void Binarization(char* input, char* output)
     double u2;    //背景的平均灰度值
     double g;     //类间方差
 
-    int thresh = 0;
-    double MaxVar = 0;
+    int thresh = 0;     //阈值
+    double MaxVar = 0;  //最大方差
     for (int th = 0; th < 256; th++)
     {
         w1 = w2 = 0;
@@ -111,8 +111,8 @@ void Binarization(char* input, char* output)
         g = w1*w2*(u1-u2)*(u1-u2);
         if (MaxVar < g)
         {
-            MaxVar = g;
-            thresh = th;
+            MaxVar = g;   //更新最大方差
+            thresh = th;  //更新阈值
         }
     }
 
@@ -127,8 +127,8 @@ void Binarization(char* input, char* output)
 			int R = data[t+2];
 
 			int Y = 0.299*R + 0.587*G + 0.114*B;
-			if (Y <= thresh) Y = 0;
-			else Y = 255;
+			if (Y <= thresh) Y = 0;  //小于阈值设为0
+			else Y = 255;            //大于阈值设为255
 
             data[t] = data[t+1] = data[t+2] = (BYTE)Y; 
 		}
