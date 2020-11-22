@@ -5,17 +5,17 @@
 
 void RGBToYUV(char* input, char* output);
 void Logarithmic(char* input, char* output);
-void Equalization1(char* input, char* output);
-void Equalization2(char* input, char* output);
-void Equalization3(char* input, char* output);
+void GreyEqualization(char* input, char* output);
+void EqualizationOnY(char* input, char* output);
+void EqualizationOnRGB(char* input, char* output);
 
 int main()
 {
 	RGBToYUV("pic.bmp", "picInYUV.bmp");
     Logarithmic("pic.bmp", "LogarithmicPic.bmp");
-    Equalization1("pic.bmp", "Equalization1Pic.bmp");
-    Equalization2("pic.bmp", "Equalization2Pic.bmp");
-    Equalization3("pic.bmp", "Equalization3Pic.bmp");
+    GreyEqualization("pic.bmp", "GreyEqualizationPic.bmp");
+    EqualizationOnY("pic.bmp", "EqualizationOnYPic.bmp");
+    EqualizationOnRGB("pic.bmp", "EqualizationOnRGB.bmp");
     return 0;
 }
 
@@ -175,7 +175,7 @@ void Logarithmic(char* input, char* output)
     free(data);
 }
 
-void Equalization1(char* input, char* output)
+void GreyEqualization(char* input, char* output)
 {
     BITMAPFILEHEADER fileHeader;  //位图文件头
     BITMAPINFOHEADER infoHeader;  //位图信息头
@@ -267,11 +267,11 @@ void Equalization1(char* input, char* output)
     fwrite(&infoHeader, sizeof(BITMAPINFOHEADER), 1, pic2);  //写入位图信息头
     fwrite(data, imageSize, 1, pic2);  //写入图像数据
     fclose(pic2);
-    printf("Equalization1 succeeded!\n");
+    printf("GreyEqualization succeeded!\n");
     free(data);
 }
 
-void Equalization2(char* input, char* output)
+void EqualizationOnY(char* input, char* output)
 {
     BITMAPFILEHEADER fileHeader;  //位图文件头
     BITMAPINFOHEADER infoHeader;  //位图信息头
@@ -379,11 +379,11 @@ void Equalization2(char* input, char* output)
     fwrite(&infoHeader, sizeof(BITMAPINFOHEADER), 1, pic2);  //写入位图信息头
     fwrite(data, imageSize, 1, pic2);  //写入图像数据
     fclose(pic2);
-    printf("Equalization2 succeeded!\n");
+    printf("EqualizationOnY succeeded!\n");
     free(data);
 }
 
-void Equalization3(char* input, char* output)
+void EqualizationOnRGB(char* input, char* output)
 {
     BITMAPFILEHEADER fileHeader;  //位图文件头
     BITMAPINFOHEADER infoHeader;  //位图信息头
@@ -493,6 +493,6 @@ void Equalization3(char* input, char* output)
     fwrite(&infoHeader, sizeof(BITMAPINFOHEADER), 1, pic2);  //写入位图信息头
     fwrite(data, imageSize, 1, pic2);  //写入图像数据
     fclose(pic2);
-    printf("Equalization3 succeeded!\n");
+    printf("EqualizationOnRGB succeeded!\n");
     free(data);
 }
