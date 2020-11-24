@@ -1,3 +1,3 @@
-## Assignments for Digital Images Processing
+## Assignments of Digital Image Processing
 
-This is my personal assignments for DIP class.
+This is my personal solutions for assignments of DIP course.
