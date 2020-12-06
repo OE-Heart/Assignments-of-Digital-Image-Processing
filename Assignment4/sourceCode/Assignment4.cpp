@@ -8,13 +8,10 @@ using namespace std;
  
 #define Pi acos(-1)
 
- 
 typedef unsigned char BYTE;
 typedef unsigned short WORD;
 typedef unsigned int DWORD;
-WORD bfType;
-int h,w;    //图像的高度和宽度
-int size;   //像素个数
+
 typedef struct tagIMAGEP  //每个像素
 {
 	BYTE blue;
@@ -45,75 +42,60 @@ typedef struct  tagBITMAPFILEHEADER{
  
 BITMAPFILEHEADER strHead;
 BITMAPINFOHEADER strInfo;
+WORD bfType;
+int h,w;    //图像的高度和宽度
+int size;   //像素个数
 int mW;   //取整的宽度
 int cx,cy;  //中心宽度，高度坐标
 
 void translation(const P* before, int x, int y);
-void mirror(const P* before);
 void rotation(const P* before, double theta);
-void shear(const P* before, double angle);
 void scale(const P* before, float x, float y);
+void shear(const P* before, double angle);
+void mirror(const P* before);
 
 int main()
 {
 	FILE* pic = fopen("./pic/pic.bmp","rb");
-	if(pic != NULL){
-		//先读取文件类型
-		fread(&bfType,1,sizeof(WORD),pic);
-		if(0x4d42!=bfType) {
-			printf("不是bmp图像");
-			return 0;
-		}
-		//读取bmp文件的文件头和信息头
-		fread(&strHead,1,sizeof(tagBITMAPFILEHEADER),pic);
-		fread(&strInfo,1,sizeof(tagBITMAPINFOHEADER),pic);
-       	h=strInfo.biHeight;
-       	w=strInfo.biWidth;
-       	//如果图像宽度不是4的倍数要取整
-       	if(w % 4 == 0)
-       		mW = w;
-       	else
-       		mW = (w/4+1)*4;
-        //图像像素数
-       	size=strInfo.biSizeImage/3;
-        //一个图像所有像素存在数组里
-        P *imgP=new P[size];
-        //读取bmp数据信息
-		fread(imgP,1,sizeof(P)*size,pic);
-		fclose(pic);
-		cx = mW / 2;
-		cy = h / 2;
-		int x,y;
-		//5个操作
-		translation(imgP, 90, 0);
-		mirror(imgP);
-		scale(imgP, 0.5, 1);
-		rotation(imgP, 45.0 / 180 * Pi);
-		shear(imgP,25.0 / 180 * Pi);
-		delete[] imgP;
+	if(pic == NULL)
+	{
+		printf("Open file failed!\n");
+		return 0;
 	}
-	else
-		printf("fail to open the file");
+	
+	fread(&bfType, 1, sizeof(WORD), pic); //先读取文件类型
+	if(bfType != 0x4d42) {
+		printf("Please choose a BMP file!\n");
+		return 0;
+	}
+
+	//读取bmp文件的文件头和信息头
+	fread(&strHead,1,sizeof(tagBITMAPFILEHEADER),pic);
+	fread(&strInfo,1,sizeof(tagBITMAPINFOHEADER),pic);
+    h=strInfo.biHeight;
+    w=strInfo.biWidth;
+
+    if (w % 4 == 0) mW = w;
+    else mW = (w/4+1)*4; //如果图像宽度不是4的倍数要取整
+
+    size=strInfo.biSizeImage/3; //图像像素数
+    //一个图像所有像素存在数组里
+    P *imgP=new P[size];
+    //读取bmp数据信息
+	fread(imgP,1,sizeof(P)*size,pic);
+	fclose(pic);
+	cx = mW / 2;
+	cy = h / 2;
+	int x,y;
+	//5个操作
+	translation(imgP, 80, 60);
+	rotation(imgP, 30.0/180*Pi);
+	scale(imgP, 0.8, 1);
+	shear(imgP, 30.0/180*Pi);
+	mirror(imgP);
+	delete[] imgP;
+
 	return 0;
-}
- 
-void mirror(const P* before){
-	P* Q = new P[size];
-	memset(Q, 0, sizeof(P) * size);
-	for (int i = 0; i < h; i++){
-		for (int j = 0; j < mW; j++){
-			Q[i*mW + j] = before[i*mW + mW - 1 - j];
-		}
-	}
-    //建新文件
-	FILE *fpo1;
-	fpo1=fopen("./pic/MirrorPic.bmp","wb");
-	fwrite(&bfType,1,sizeof(WORD),fpo1);
-	fwrite(&strHead,1,sizeof(tagBITMAPFILEHEADER),fpo1);
-	fwrite(&strInfo,1,sizeof(tagBITMAPINFOHEADER),fpo1);
-	fwrite(Q,1,sizeof(P)*(size),fpo1);
-	fclose(fpo1);
-	delete[] Q;
 }
  
 void translation(const P* before, int x, int y){
@@ -337,54 +319,7 @@ void rotation(const P* before, double theta){
 	delete[] Q;
 	delete[] tK;
 }
- 
-void shear(const P* before, double angle){
-	int nH, nW ,newSize;
-	P* Q;
-	int* tK;
- 
-	nW = mW;
- 
-	nH = h + tan(angle)*mW;
-	newSize = nW * nH;
-	Q = new P[newSize];
-	tK = new int[newSize];
-    //判断所有像素是否已经有信息的标记数组
-	for(int i = 0; i < newSize; i++)
-		tK[i] = 1;
-    //原来的
-	for(int i = 0; i < h; i++){
-		for(int j = 0; j < mW; j++){
-            //求变换后的横纵坐标，并赋值对应的像素
-			int tmpX = j;
-			int tmpY = (int)(i + tan(angle)*j);
-			Q[tmpY * nW + tmpX] = before[i*mW + j];
-            //有信息后标记为0
-			tK[tmpY * nW + tmpX] = 0;
-		}
-	}
-    //没图像的位置都用白色填充
-	for(int i = 0; i < newSize; i++)
-		if(tK[i] == 1)
-			Q[i].red = Q[i].green = Q[i].blue = 255;
-    //新文件
-	FILE *fpo1;
-	fpo1=fopen("./pic/ShearPic.bmp","wb");
-	BITMAPFILEHEADER nHead = strHead;
-	BITMAPINFOHEADER newInfo = strInfo;
-	nHead.bfSize = (DWORD)(nHead.bfSize - size*3 + newSize*3);
-	newInfo.biHeight = (DWORD)nH;
-	newInfo.biWidth = (DWORD)nW;
-	newInfo.biSizeImage = (DWORD)(newSize * 3);
-	fwrite(&bfType,1,sizeof(WORD),fpo1);
-	fwrite(&nHead,1,sizeof(tagBITMAPFILEHEADER),fpo1);
-	fwrite(&newInfo,1,sizeof(tagBITMAPINFOHEADER),fpo1);
-	fwrite(Q,1,sizeof(P)*(newSize),fpo1);
-	fclose(fpo1);
-	delete[] Q;
-	delete[] tK;
-}
-//缩小放大
+
 void scale(const P* before, float x, float y){
     //新的图像高度和宽度
 	int nH = (int)(h * y);
@@ -455,7 +390,7 @@ void scale(const P* before, float x, float y){
 			tK[i*nW + j] = 0;
 		}
 	}
-	//竖直scale,这次没有
+	//竖直scale
 	for(int i = 0; i < nW; i++){
 		int last = -1;
 		for(int j = 0; j < nH; j++){
@@ -505,4 +440,70 @@ void scale(const P* before, float x, float y){
 	fclose(fpo1);
 	delete[] Q;
 	delete[] tK;
+}
+ 
+void shear(const P* before, double angle){
+	int nH, nW ,newSize;
+	P* Q;
+	int* tK;
+ 
+	nW = mW;
+ 
+	nH = h + tan(angle)*mW;
+	newSize = nW * nH;
+	Q = new P[newSize];
+	tK = new int[newSize];
+    //判断所有像素是否已经有信息的标记数组
+	for(int i = 0; i < newSize; i++)
+		tK[i] = 1;
+    //原来的
+	for(int i = 0; i < h; i++){
+		for(int j = 0; j < mW; j++){
+            //求变换后的横纵坐标，并赋值对应的像素
+			int tmpX = j;
+			int tmpY = (int)(i + tan(angle)*j);
+			Q[tmpY * nW + tmpX] = before[i*mW + j];
+            //有信息后标记为0
+			tK[tmpY * nW + tmpX] = 0;
+		}
+	}
+    //没图像的位置都用白色填充
+	for(int i = 0; i < newSize; i++)
+		if(tK[i] == 1)
+			Q[i].red = Q[i].green = Q[i].blue = 255;
+    //新文件
+	FILE *fpo1;
+	fpo1=fopen("./pic/ShearPic.bmp","wb");
+	BITMAPFILEHEADER nHead = strHead;
+	BITMAPINFOHEADER newInfo = strInfo;
+	nHead.bfSize = (DWORD)(nHead.bfSize - size*3 + newSize*3);
+	newInfo.biHeight = (DWORD)nH;
+	newInfo.biWidth = (DWORD)nW;
+	newInfo.biSizeImage = (DWORD)(newSize * 3);
+	fwrite(&bfType,1,sizeof(WORD),fpo1);
+	fwrite(&nHead,1,sizeof(tagBITMAPFILEHEADER),fpo1);
+	fwrite(&newInfo,1,sizeof(tagBITMAPINFOHEADER),fpo1);
+	fwrite(Q,1,sizeof(P)*(newSize),fpo1);
+	fclose(fpo1);
+	delete[] Q;
+	delete[] tK;
+}
+
+void mirror(const P* before){
+	P* Q = new P[size];
+	memset(Q, 0, sizeof(P) * size);
+	for (int i = 0; i < h; i++){
+		for (int j = 0; j < mW; j++){
+			Q[i*mW + j] = before[i*mW + mW - 1 - j];
+		}
+	}
+    //建新文件
+	FILE *fpo1;
+	fpo1=fopen("./pic/MirrorPic.bmp","wb");
+	fwrite(&bfType,1,sizeof(WORD),fpo1);
+	fwrite(&strHead,1,sizeof(tagBITMAPFILEHEADER),fpo1);
+	fwrite(&strInfo,1,sizeof(tagBITMAPINFOHEADER),fpo1);
+	fwrite(Q,1,sizeof(P)*(size),fpo1);
+	fclose(fpo1);
+	delete[] Q;
 }
