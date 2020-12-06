@@ -1,14 +1,14 @@
 
 
-<img src="pic/1.png" alt="1" style="zoom:120%;" />
+<img src="pic/1.png" alt="1" style="zoom:80%;" />
 
 
 
-<center><font face="黑体" size="20">图像的简单几何变换实验报告</font><font face="黑体" size="20"></font>
+<center><font face="黑体" size="18">图像的简单几何变换实验报告</font><font face="黑体" size="20"></font>
 
 
 
-<img src="pic/2.png" alt="2" style="zoom:150%;" />
+<img src="pic/2.png" alt="2" style="zoom:80%;" />
 
 
 
@@ -23,7 +23,6 @@
 <center>
     <font face="楷体" size="5">学号：3190104783</font>
 </center>
-
 <center>
     <font face="楷体" size="5">课程名称：图像信息处理</font>
 </center>
@@ -524,7 +523,7 @@ void tXY(int &x, int &y, double theta){
 	}
 ```
 
-​		利用放大倍数x,y进行整个画布大小的重构，并改写bmp结构中的头部分，使其大小适应newSize。先对原data中元素进行变换，此次选取最临近插值，对越界部分进行填充，其他部分进行对应坐标填充，最后得到缩放后图片进行输出。
+​		利用放大倍数x,y进行整个画布大小的重构，并改写bmp结构中的头部分，使其大小适应newSize。先把整个图像初始化为0，然后扫描所需要的新图像，计算像素点缩放后的坐标，分别在水平和竖直两个方向上完成操作，并对越界部分进行填充，其他部分进行对应坐标填充，最后得到缩放后图片进行输出。
 
 ### 3.4 错切
 
@@ -612,3 +611,4 @@ void tXY(int &x, int &y, double theta){
 ##  5 心得体会
 
 ​		通过本次实验，我对BMP文件结构有了更深了解的同时还巩固了老师上课时讲到的一些简单几何变换操作。除此之外，对本次实验的深入思考也让我收获到很多知识，但在有些地方还有很大的改进可能空间，比如平移变换没有实现x，y是负值的情况，在插值的部分也可以进行效果更好的其它算法。
+
